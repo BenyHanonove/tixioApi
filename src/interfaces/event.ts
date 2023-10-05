@@ -5,7 +5,7 @@ export interface EventInterface {
     name: string;
     creatorId: string;
     description: string;
-    registeredUsers: string[];
+    registeredUsers: Map<String ,boolean>;
     image: string;
     eventDate:DateInterface;
 };

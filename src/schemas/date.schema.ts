@@ -30,7 +30,7 @@ export const TimeSchema = SchemaFactory.createForClass(Time);
 
 
 //Schema for date
-@Schema()
+@Schema({_id:false})
 export class Date {
     @Prop({ type: Calendar, required: true })
     calendar: Calendar;

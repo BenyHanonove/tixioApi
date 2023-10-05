@@ -15,20 +15,19 @@ export class Event {
     @Prop({ required: true})
     description:string;
 
-    @Prop({default:[] ,type:[String]})
-    registeredUsers:string[];
-
     @Prop({ required: true})
     image:string;
-
+    
     @Prop({ type: Date, required: true })
-    authentication: Date;
-
+    eventDate: Date;
+    
+    @Prop({ type: Map, of: Boolean, default: new Map() })
+    registeredUsers: Map<string, boolean>;
 };
-
 export const eventSchema = SchemaFactory.createForClass(Event);
 
-const EventModel = mongoose.model("User",eventSchema);
+
+const EventModel = mongoose.model("Event",eventSchema);
 
 // Function to get all events from DB
 export const getEvents = () => EventModel.find();
