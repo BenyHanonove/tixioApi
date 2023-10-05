@@ -9,3 +9,9 @@ export interface EventInterface {
     image: string;
     eventDate:DateInterface;
 };
+
+
+export interface EventUserLink{
+    userId: string,
+    eventId: string,
+}

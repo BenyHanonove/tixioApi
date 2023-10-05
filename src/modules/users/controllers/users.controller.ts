@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpStatus, Param, Post, Put, Req, Res } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpStatus, Param, Patch, Post, Req, Res } from '@nestjs/common';
 import { UserService } from '../services/users.service';
 import { Request, Response } from 'express';
 import { UserInterface } from 'src/interfaces/user';
@@ -22,6 +22,21 @@ export class UsersController {
             res.status(HttpStatus.BAD_REQUEST).json({ msg: err.message })
         }
     };
+
+        //Post method to create new user
+        @Post("/login")
+        async loginUser(
+            @Req() req: Request,
+            @Res() res: Response,
+            @Body() userData: UserInterface,
+        ){
+            try{
+                this.UserService.loginUser(userData,res);
+            }catch(err){
+                console.log(err);
+                res.status(HttpStatus.BAD_REQUEST).json({ msg: err.message })
+            }
+        };
 
     //Get method to get user by email
     @Get("/email/:email")
@@ -70,7 +85,7 @@ export class UsersController {
         };
 
         //Put method to update user password by id
-        @Put("/updatePassword")
+        @Patch("/updatePassword")
         UpdatePassword(
             @Req() req: Request,
             @Res() res: Response,

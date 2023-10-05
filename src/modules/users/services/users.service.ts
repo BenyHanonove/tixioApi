@@ -9,7 +9,8 @@ import {
     createUser,
     deleteUser,
     updateUserById,
-    getUserByIdWithAuthentication
+    getUserByIdWithAuthentication,
+    updateSessionToken,
 } from 'src/schemas/user.schema';
 
 @Injectable()
@@ -56,6 +57,49 @@ export class UserService {
             return res.status(HttpStatus.BAD_REQUEST).json({ msg: "An error occurred while creating a new user." }).end();
         };
     };
+
+
+    // Function to log in a user
+    async loginUser(userData: Partial<UserInterface>, res: Response) {
+        try {
+            const { email, authentication } = userData;
+    
+            if (!email || !authentication || !authentication.password) {
+                return res.status(HttpStatus.BAD_REQUEST).json({ msg: "Missing email or password" });
+            }
+    
+            // Retrieve the user by email without authentication data
+            const userWithoutAuthentication = await getUserByEmail(email);
+    
+            if (!userWithoutAuthentication) {
+                return res.status(HttpStatus.UNAUTHORIZED).json({ msg: "Wrong email or password" });
+            }
+    
+            // Retrieve the user by ID with authentication data
+            const userWithAuthentication = await getUserByIdWithAuthentication(userWithoutAuthentication._id.toString());
+    
+            // Check if the provided password matches the stored hashed password
+            const isPasswordMatch = doesPasswordMatch(authentication.password, userWithAuthentication.authentication.salt, userWithAuthentication.authentication.password);
+    
+            if (!isPasswordMatch) {
+                return res.status(HttpStatus.UNAUTHORIZED).json({ msg: "Wrong email or password" });
+            }
+    
+            // Generate a session token (customize this as needed)
+            const newSessionToken = uuidv4();
+    
+            // Update the user's session token in the database
+            await updateSessionToken(userWithAuthentication._id.toString(), newSessionToken);
+    
+            // Return the user and session token (customize the response as needed)
+            return res.status(HttpStatus.OK).json({ user: userWithAuthentication, sessionToken: newSessionToken });
+        } catch (err) {
+            console.error("An error occurred while logging in:", err);
+            return res.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ msg: "An error occurred while logging in" });
+        }
+    };
+    
+
 
     //Function to search for new user by email
     async findUserByEmail(email:string, res: Response){

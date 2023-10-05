@@ -50,3 +50,20 @@ export const deleteUser = (id: string) => UserModel.findOneAndDelete({_id: id});
 
 //Function to find single user and update him inside DB
 export const updateUserById = (id :String ,values: Record<string ,any>) => UserModel.findByIdAndUpdate(id ,values);
+
+// Function to update the session token for a user by ID
+export const updateSessionToken = async (userId: string, newSessionToken: string) => {
+    try {
+        const user = await UserModel.findByIdAndUpdate(userId, {
+            'authentication.sessionToken': newSessionToken
+        }, { new: true });
+
+        if (!user) {
+            throw new Error('User not found');
+        }
+
+        return user.toObject();
+    } catch (error) {
+        throw new Error('Could not update session token: ' + error.message);
+    }
+};

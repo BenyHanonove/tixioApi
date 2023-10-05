@@ -2,7 +2,7 @@ import { Document } from "mongoose";
 import {AuthenticationInterface} from "./authentication"
 
 export interface UserInterface extends Document{
-    id:string,
+    _id:string,
     fullName: string;
     username: string;
     email: string;
